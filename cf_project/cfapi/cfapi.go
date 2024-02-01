@@ -1,14 +1,13 @@
 package cfapi
 
 import (
-	"encoding/json"
+	models "CF_PROJECT/models"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"strconv"
-
-	models "CF_PROJECT/models"
+	"encoding/json"
+	"io"
 )
 
 type CodeforcesClient struct {
@@ -25,7 +24,7 @@ func (cfClient *CodeforcesClient) RecentActions(maxCount int) ([]models.RecentAc
 	}
 	defer resp.Body.Close()
 
-	data, err := io.ReadAll(resp.Body)
+	document, err := io.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("error occurred while reading the resp body")
 		return nil, err
@@ -36,8 +35,8 @@ func (cfClient *CodeforcesClient) RecentActions(maxCount int) ([]models.RecentAc
 		Result []models.RecentAction
 	}{}
 
-	if err = json.Unmarshal(data, &wrapper); err != nil {
-		log.Printf("Error while unmarshalling data from cfapi : %v", err)
+	if err = json.Unmarshal(document, &wrapper); err != nil {
+		log.Printf("Error while unmarshalling document from cfapi : %v", err)
 	}
 
 	return wrapper.Result, err
