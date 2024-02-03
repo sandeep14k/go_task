@@ -5,11 +5,15 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 const (
-	GetRecentActions = "/recent/actions"
+	kGetRecentActions = "/recent/actions"
+)
+const (
+	GetUserData = "/user/signup"
 )
 
 func CreateWebServer(mongoStore *store.MongoStore) *Server {
@@ -17,7 +21,11 @@ func CreateWebServer(mongoStore *store.MongoStore) *Server {
 	srv.r = gin.Default()
 	srv.store = mongoStore
 
-	srv.r.GET(GetRecentActions, srv.RecentActionsHandler)
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:3000"}
+	srv.r.Use(cors.New(config))
+
+	srv.r.GET(kGetRecentActions, srv.RecentActionsHandler)
 
 	return srv
 }
@@ -45,3 +53,4 @@ func (srv *Server) StartListeningRequests(addr string) error {
 	}
 	return err
 }
+
